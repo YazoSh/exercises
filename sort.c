@@ -1,7 +1,7 @@
 /* 
 	sorts lines of text from standered input 
 	uses the quick sort algorithm
-	you can use www.generatedata.com to get test data
+	you can use www.generatedata.com to get test data 
 */
 
 #include <stdio.h>
