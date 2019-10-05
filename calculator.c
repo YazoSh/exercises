@@ -1,3 +1,12 @@
+/* 
+	a calculator for simple post-fix math expressions like "(3 - 2) * (5 + 7)"\
+	are entered like "3 2 - 5 7 + *".
+	also supports the use of these Trigonometric functions (sin,cos,tan),\
+	used as in "sin 1" where "10" is in radians,
+	and (exp,pow) use as "exp 10" and "pow 3 2".
+*/
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
