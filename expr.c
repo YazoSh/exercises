@@ -60,6 +60,8 @@ int type(char *s)
 int isnum(char *s)
 {	
 	int c;
+	if(*s == '-')
+		s++;
 	while((c = *s++))
 		if(c == '.')
 			goto ifFraction;
