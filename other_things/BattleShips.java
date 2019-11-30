@@ -1,3 +1,10 @@
+/*# Battle-ships-game
+	Battel ships is a battle between the user and the computer
+	each deploying there ships on a 10 x 10 grid and trying to guess where each other's ships are,
+	the winner is first to destroy all the other players ships.
+*/
+
+
 import java.util.*;
 
 class BattleShips
