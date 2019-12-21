@@ -1,7 +1,7 @@
 /*
 	Turns a post-fix expression into an in-fix expression
 
-	Usage: expr <post-fix expression>
+	Usage: ./expr <post-fix expression>
 */
 
 #include <stdio.h>
