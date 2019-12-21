@@ -1,6 +1,7 @@
 /*
 	Loads all input words into a binary tree and outputs a list of line numbers on which they occur
-
+	but ignores some of the english noise words, not all of them cause i couldnt find a full list of them
+	
 	compile and run with ./a.out < "file"
 */
 
