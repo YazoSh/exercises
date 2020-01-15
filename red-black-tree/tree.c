@@ -9,7 +9,7 @@
 
 enum {RED,BLACK};
 
-#include "lib/nodestruct.h"
+#include "lib/nodestruct.c"
 
 void *alloc(int);
 struct node *nil = NULL;
@@ -150,7 +150,7 @@ void *alloc(int n)
 	return (void *)(bufferp - n);
 }
 
-#include "lib/treeprint.h"
+#include "lib/treeprint.c"
 #include <stdlib.h>
 
 int main()
