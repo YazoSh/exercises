@@ -1,3 +1,34 @@
+/*
+	mprintf: a small version of the C printf function
+	         for Unix like operating systems
+
+	Usage:	void mprintf(char *format, ...)
+		the format string cointains two types of objects
+		ordinary charectars, which are copied to standard output
+		and conversion specificatio.
+		Each conversion specifier starts with a % and ends with a
+		conversion charectar, and in between there may be, in order:
+		
+		* '-', a minus sign specifiying right adjusment
+
+		* a number specifing the minimum field width - padded with spaces -
+
+		* '.', a period sperating min field width and precision
+
+		* a number, which specifies precision for floating number values,
+		minimum number of digits for an integer or the maximim number of
+		charectars to printed from a string
+
+		Conversion charectar can be:
+		'i', 'd' - for integers in decimal
+		'u' - for unsigned integers in decimal
+		'c' - for singal charectars
+		'o' - for integers in octal
+		'x', 'X' - for integers in hexadicimal with small or capital letters
+		'p' - for pointers in hexadecimal with a leading "0x"
+		'f' - for floating point numbers
+		's' - for strings
+*/
 #include <stdio.h>
 #include <stdarg.h>
 
@@ -38,20 +69,15 @@ void addpadding(char **s, int n, char c)
 	for(int i = n; n > 0; n--)
 		*(*s)++ = c; 
 }
-int precision = 6;
-void ntos(char *b, char type, void *d)
+
+void ntos(char *b, char type, int precision, void *d)
 {
 	char sign  = 0, *s = b;
 	char capital = 0;
 	if(abso(type, d) < 0)
 		sign = '-'; 
-	if(type == HEX)
-		capital = 1;
 
-	union {
-		double frac;
-		unsigned long fracpart;
-		}u;
+	double frac;
 	int dec;
 
 	switch(type){
@@ -94,7 +120,7 @@ void ntos(char *b, char type, void *d)
 		case HEX:
 			do{
 				*b++ = *(int *)d % 16 + ((*(int *)d % 16 < 10)? '0' :
-					 (capital)? 'A' - 10:'a' - 10);
+					 (type == HEX)? 'A' - 10:'a' - 10);
 				*(int *)d /= 16;
 			}while(*(int *)d > 0);
 			addpadding(&b , precision - (b - s), '0');
@@ -108,16 +134,19 @@ void ntos(char *b, char type, void *d)
 			addpadding(&b , precision - (b - s), '0');
                         break;
 		case DOUBLE:
-                        u.frac = (*(double *)d - (int)(*(double *)d));
-                        for(int i = 0; i < precision; i++,u.frac *= 10)
-				;	  
-			u.fracpart = (int)u.frac;
+                        frac = (*(double *)d - (int)(*(double *)d));
 			dec = (int)(*(double *)d);
-                        do{
-                                *b++ = u.fracpart % 10 + '0';
-                                u.fracpart /= 10;
-                        }while(u.fracpart > 0);
-                        *b++ = '.';
+                        while(precision--)
+			{
+				frac *= 10;
+                        	*b++ = (int)frac % 10 + '0';
+				if(precision == 0)
+				{
+					*b = '\0';
+					reverse(s);
+					*b++ = '.';
+				}
+                        }
 			do{
                                 *b++ = dec % 10 + '0';
                                 dec /= 10; 
@@ -138,12 +167,14 @@ void printpadding(int n, char c)
 		putchar(c);
 }
 
+static int maxwidth;
 void putarr(char *s, int minwidth, char adj)
 {
 	union {
 		int length;
 		int space;
 		} u = {0};
+	if(!maxwidth) maxwidth--;
 
 	while(s[u.length])
 		u.length++;
@@ -151,7 +182,7 @@ void putarr(char *s, int minwidth, char adj)
 
 	if(adj == RIGHT) printpadding(u.space, ' ');
 		
-	while(*s) putchar(*s++);
+	while(*s && maxwidth--) putchar(*s++);
 
 	if(adj == LEFT) printpadding(u.space, ' ');
 }
@@ -175,7 +206,8 @@ void mprintf(char *fmt, ...)
 	{
 		char adj = RIGHT;
 		int minwidth = 0;
-		precision = 6;	
+	        int precision = 6;	
+		maxwidth = 0;
 
 		if(*p != '%')
 		{
@@ -206,6 +238,7 @@ void mprintf(char *fmt, ...)
 			precision = 0;
 			while(*sp)
 				precision = precision * 10 + *sp++ - '0';	
+			maxwidth = precision;
 		}
 		#undef _isnum
 		switch(*p)
@@ -213,29 +246,29 @@ void mprintf(char *fmt, ...)
 			case 'i':
 			case 'd':
 				u.ival = va_arg(ap, int);		
-				ntos(buff, INT, (void *)(&u.ival));
+				ntos(buff, INT, precision, (void *)(&u.ival));
 				putarr(buff, minwidth, adj);
 				break;
 			case 'o':
 				u.uval = va_arg(ap, int);
-				ntos(buff, OCTAL, (void *)(&u.uval));
+				ntos(buff, OCTAL, precision, (void *)(&u.uval));
 				putarr(buff, minwidth, adj);
 				break;
 			case 'x':
 			case 'X':
 				u.uval = va_arg(ap, int);
-				ntos(buff, (*p == 'x')?hex:HEX, (void *)(&u.uval));	
+				ntos(buff, (*p == 'x')?hex:HEX, precision, (void *)(&u.uval));	
 				putarr(buff, minwidth, adj);
 				break;
 			case 'p':
 				u.ulval = (unsigned long)va_arg(ap, void *);
 				buff[0] = '0';buff[1] = 'x';
-				ntos(buff + 2, HULINT, (void *)(&u.ulval));
+				ntos(buff + 2, HULINT, precision, (void *)(&u.ulval));
 				putarr(buff, minwidth, adj);
 				break;
 			case 'u':
 				u.uval = va_arg(ap, int);
-				ntos(buff, UINT, (void *)(&u.uval));
+				ntos(buff, UINT, precision, (void *)(&u.uval));
 				putarr(buff, minwidth, adj);
 				break;
 			case 'c':
@@ -243,7 +276,7 @@ void mprintf(char *fmt, ...)
 				break;
 			case 'f':
 				u.dval = va_arg(ap, double);
-				ntos(buff, DOUBLE, (void *)(&u.dval));
+				ntos(buff, DOUBLE, precision, (void *)(&u.dval));
 				putarr(buff, minwidth, adj);
 				break;
 			case 's':
@@ -254,11 +287,4 @@ void mprintf(char *fmt, ...)
 		}
 	}	
 	va_end(ap);
-}
-
-int main()
-{
-	int x = 5;
-	mprintf("%.4o %s\n%p\n", 69, "\"nigga string\"", &x);
-	mprintf(":%-6.2f:\n",89.65);
 }
