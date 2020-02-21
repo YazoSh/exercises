@@ -3,6 +3,7 @@
 int main(int argc, char **argv)
 {
 	FILE *input = (argc > 1)?NULL:stdin;
+	char *pro = argv[0];
 	// adds one to the arg counter so it would run at least one time
 	// if no argunments are passed
 	// kinda hacky but f it
@@ -13,7 +14,7 @@ int main(int argc, char **argv)
 			input = fopen(*++argv,"r");
 		if(input == NULL)
 		{
-			fprintf(stderr,"File:\"%s\" couldn\'t be opened!\n", *argv);
+			fprintf(stderr,"%s: file \"%s\" couldn\'t be opened!\n", pro, *argv);
 			continue;
 		}
 		int c;
