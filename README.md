@@ -1,5 +1,6 @@
 # things
-#ifndef stuff
+#ifndef STUFF
+#define STUFF
 
 random repo for random things
 
