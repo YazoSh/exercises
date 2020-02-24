@@ -1,4 +1,4 @@
-section .date
+section .data
 	string db "hello there",10,0
 section .text
 	global _start
