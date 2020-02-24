@@ -1,15 +1,4 @@
-section .data
-	string db "hello there",10,0
 section .text
-	global _start
-_start:
-	mov rax, string
-	call _putsRAX
-
-	mov rax, 60
-	mov rdi, 0
-	syscall
-	
 ; input: rax as a pointer to a char
 ; prints a null terminated string
 _putsRAX:

@@ -1,16 +1,8 @@
 section .bss
 	nstring resb 100
 	stringp resb 8
-section .text
-	global _start
-_start:
-	mov rax, 123345	
-	call _printRAXint
-
-	mov rax, 60
-	mov rdi, 0
-	syscall
-
+section .text	
+	global _printRAXint
 _printRAXint:
 	; sets the pointers up
 	mov rbx, stringp

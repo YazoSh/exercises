@@ -1,17 +1,4 @@
-section .data
-	num db "257",0
-section .bss
-	strbuff resb 100
-section .text
-	global _start
-_start:
-	mov rax, num
-	call _atoiRAX
-
-	mov rdi, rax
-	mov rax, 60 
-	syscall
-	
+	global _atoiRAX
 _atoiRAX:
 	mov rbx, rax	
 	mov rax, 0
