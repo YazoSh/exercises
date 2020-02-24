@@ -1,6 +1,7 @@
-section .text
 ; input: rax as a pointer to a char
 ; prints a null terminated string
+section .text
+	global _putsRAX
 _putsRAX:
 	push rax
 	mov rbx, 0
