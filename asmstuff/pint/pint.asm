@@ -44,5 +44,3 @@ _printRAXint:
 	cmp r10, rbx
 	jne _printloop
 	ret
-section .data
-	x db 10
