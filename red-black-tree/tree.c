@@ -173,8 +173,11 @@ int getnum(char* s)
 	char *t = s;
 	int c;
 	if((c = getchar()) == '-')
-		*s++ = c,c = getchar();
-	for(;(c >= '0' && c <= '9' && c != EOF)? *s++ = c:0; c = getchar())
+	{
+		*s++ = c;
+		c = getchar();
+	}
+	for(;(c >= '0' && c <= '9')? *s++ = c:0; c = getchar())
 		;
 	*s = '\0';
 	return c;
